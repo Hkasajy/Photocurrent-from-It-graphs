@@ -1,4 +1,8 @@
 """Interactive picker helpers for detector analysis."""
+import matplotlib
+
+matplotlib.use("TkAgg")
+
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -155,6 +159,6 @@ def pick_windows_interactive_shift_undo(df, device, time_col: str):
     fig.canvas.mpl_connect("button_press_event", on_click)
     fig.canvas.mpl_connect("key_press_event", on_key)
 
-    plt.show()
+    plt.show(block=True)
 
     return on_windows, off_windows

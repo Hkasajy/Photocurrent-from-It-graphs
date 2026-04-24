@@ -4,9 +4,6 @@ from tkinter import Tk, filedialog
 
 import pandas as pd
 
-import matplotlib
-matplotlib.use("TkAgg")
-
 # Ensure src/ is on path
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
