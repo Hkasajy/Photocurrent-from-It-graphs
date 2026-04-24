@@ -31,9 +31,11 @@ def select_input_file() -> Path:
     return Path(filepath)
 
 
-def select_output_file(default_name: str) -> Path:
+def select_output_file(default_name: str, input_file: Path | None = None) -> Path:
     """
     Open a file dialog for the user to choose where to save the output Excel file.
+
+    If input_file is provided, prevent overwriting the original input workbook.
     """
     root = Tk()
     root.withdraw()
@@ -53,8 +55,19 @@ def select_output_file(default_name: str) -> Path:
     if not filepath:
         raise FileNotFoundError("No output file location was selected.")
 
-    return Path(filepath)
+    output_file = Path(filepath)
 
+    if input_file is not None:
+        input_resolved = Path(input_file).resolve()
+        output_resolved = output_file.resolve()
+
+        if output_resolved == input_resolved:
+            raise ValueError(
+                "Output file cannot be the same as the input file. "
+                "Choose a different filename to avoid overwriting the original data."
+            )
+
+    return output_file
 
 def load_it_data(filepath, sheet_name=0) -> pd.DataFrame:
     """

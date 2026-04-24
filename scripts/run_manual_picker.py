@@ -39,7 +39,7 @@ FILEPATH = select_input_file()
 print("Using input file:", FILEPATH)
 
 default_output_name = f"{FILEPATH.stem}_Result.xlsx"
-OUTPUT_FILE = select_output_file(default_output_name)
+OUTPUT_FILE = select_output_file(default_output_name, input_file=FILEPATH)
 print("Output Excel file:", OUTPUT_FILE)
 # =============================
 # LOAD DATA
