@@ -35,6 +35,11 @@ USE_MEDIAN = True
 
 PLOT_DPI = 200
 
+# =============================
+# EXECUTION MODE
+# =============================
+USE_MANUAL_PICKER = True   # True → GUI, False → test mode
+
 FILEPATH = select_input_file()
 print("Using input file:", FILEPATH)
 
@@ -77,13 +82,21 @@ print("  - Press 'u' to UNDO")
 print("  - SHIFT + click to FINISH current device\n")
 
 for dev in device_list:
-    print(f"\n--- Picking windows for {dev} ---")
+    print(f"\n--- Processing device {dev} ---")
 
-    on_w, off_w = pick_windows_interactive_shift_undo(
-        df_it,
-        dev,
-        time_col=TIME_COL,
-    )
+    if USE_MANUAL_PICKER:
+        print("Mode: manual picker")
+        on_w, off_w = pick_windows_interactive_shift_undo(
+            df_it,
+            dev,
+            time_col=TIME_COL,
+        )
+    else:
+        print("Mode: test (predefined windows)")
+
+        # Define fixed windows for testing
+        on_w = [(2, 3)]
+        off_w = [(0, 1)]
 
     if len(on_w) == 0 or len(off_w) == 0:
         print(f"[{dev}] No windows picked — skipping.")
