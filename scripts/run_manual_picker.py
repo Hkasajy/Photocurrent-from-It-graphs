@@ -1,6 +1,5 @@
 import sys
 from pathlib import Path
-from tkinter import Tk, filedialog
 
 import pandas as pd
 
@@ -9,7 +8,13 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 sys.path.insert(0, str(SRC))
 
-from detector_analysis.io import load_it_data, resolve_device_list, write_results_excel
+from detector_analysis.io import (
+    select_input_file,
+    select_output_file,
+    load_it_data,
+    resolve_device_list,
+    write_results_excel,
+)
 from detector_analysis.metrics import (
     compute_pulse_metrics_per_device,
     summarize_per_device,
@@ -17,30 +22,6 @@ from detector_analysis.metrics import (
 from detector_analysis.picker import pick_windows_interactive_shift_undo
 from detector_analysis.plotting import plot_all_devices_overlay, save_device_plot_png
 from detector_analysis.utils import safe_filename
-
-
-def select_input_file() -> Path:
-    """
-    Force the user to select an Excel file via dialog.
-    """
-    root = Tk()
-    root.withdraw()
-
-    filepath = filedialog.askopenfilename(
-        title="Select I–t Excel data file",
-        filetypes=[
-            ("Excel files", "*.xlsx *.xls"),
-            ("All files", "*.*"),
-        ],
-    )
-
-    root.destroy()
-
-    if not filepath:
-        raise FileNotFoundError("No input file was selected.")
-
-    return Path(filepath)
-
 
 # =============================
 # CONFIG
@@ -54,37 +35,26 @@ USE_MEDIAN = True
 
 PLOT_DPI = 200
 
-
-# =============================
-# INPUT FILE
-# =============================
 FILEPATH = select_input_file()
-
 print("Using input file:", FILEPATH)
 
-
-# =============================
-# OUTPUT PATHS
-# =============================
-OUTPUT_DIR = ROOT / "outputs"
-EXCEL_DIR = OUTPUT_DIR / "excel"
-PLOTS_DIR = OUTPUT_DIR / "plots" / FILEPATH.stem
-
-EXCEL_DIR.mkdir(parents=True, exist_ok=True)
-PLOTS_DIR.mkdir(parents=True, exist_ok=True)
-
-OUTPUT_FILE = EXCEL_DIR / f"{FILEPATH.stem}_Result.xlsx"
-
+default_output_name = f"{FILEPATH.stem}_Result.xlsx"
+OUTPUT_FILE = select_output_file(default_output_name)
 print("Output Excel file:", OUTPUT_FILE)
-print("Plot folder:", PLOTS_DIR)
-
-
 # =============================
 # LOAD DATA
 # =============================
 df_it = load_it_data(FILEPATH, sheet_name=SHEET_IT)
 device_list = resolve_device_list(df_it, TIME_COL, DEVICES_TO_DO)
 
+# =============================
+# PLOT OUTPUT DIRECTORY
+# =============================
+OUTPUT_DIR = ROOT / "outputs"
+PLOTS_DIR = OUTPUT_DIR / "plots" / FILEPATH.stem
+PLOTS_DIR.mkdir(parents=True, exist_ok=True)
+
+print("Plot folder:", PLOTS_DIR)
 
 # =============================
 # OVERVIEW PLOT
