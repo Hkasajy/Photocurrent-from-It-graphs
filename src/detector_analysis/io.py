@@ -7,6 +7,69 @@ from openpyxl.drawing.image import Image as XLImage
 
 from detector_analysis.utils import excel_safe_sheet_name
 
+from tkinter import Tk, Toplevel, StringVar, OptionMenu, Button, Label
+
+
+def select_time_column(df: pd.DataFrame) -> str:
+    """
+    Open a dialog allowing the user to select the time column from available columns.
+    """
+    from tkinter import Tk, Toplevel, StringVar, OptionMenu, Button, Label
+
+    columns = [str(c) for c in df.columns]
+
+    if len(columns) == 0:
+        raise ValueError("The dataframe has no columns.")
+
+    root = Tk()
+    root.withdraw()
+
+    selected_col = StringVar(value=columns[0])
+    result = {"value": None}
+
+    window = Toplevel(root)
+    window.title("Select Time Column")
+    window.geometry("350x140")
+    window.resizable(False, False)
+
+    Label(window, text="Select the time column:").pack(pady=10)
+
+    dropdown = OptionMenu(window, selected_col, *columns)
+    dropdown.pack(pady=5)
+
+    def confirm():
+        result["value"] = selected_col.get()
+        window.destroy()
+        root.quit()
+
+    Button(window, text="OK", command=confirm).pack(pady=10)
+
+    window.protocol("WM_DELETE_WINDOW", confirm)
+
+    window.grab_set()
+    window.focus_force()
+
+    root.mainloop()
+    root.destroy()
+
+    if result["value"] is None:
+        raise ValueError("No time column selected.")
+
+    return result["value"]
+
+    def confirm():
+        result["value"] = selected_col.get()
+        selection_window.destroy()
+
+    Button(selection_window, text="OK", command=confirm).pack(pady=10)
+
+    selection_window.mainloop()
+    root.destroy()
+
+    if result["value"] is None:
+        raise ValueError("No time column selected.")
+
+    return result["value"]
 
 def select_input_file() -> Path:
     """

@@ -1,7 +1,8 @@
 import sys
 from pathlib import Path
-
 import pandas as pd
+
+print("Script started")
 
 # Ensure src/ is on path
 ROOT = Path(__file__).resolve().parents[1]
@@ -11,6 +12,7 @@ sys.path.insert(0, str(SRC))
 from detector_analysis.io import (
     select_input_file,
     select_output_file,
+    select_time_column,
     load_it_data,
     resolve_device_list,
     write_results_excel,
@@ -23,34 +25,47 @@ from detector_analysis.picker import pick_windows_interactive_shift_undo
 from detector_analysis.plotting import plot_all_devices_overlay, save_device_plot_png
 from detector_analysis.utils import safe_filename
 
+
 # =============================
 # CONFIG
 # =============================
 SHEET_IT = 0
-TIME_COL = "t(ms)"
 
 DEVICES_TO_DO = "ALL"
 PLOT_ALL_DEVICES_OVERLAY = True
 USE_MEDIAN = True
-
 PLOT_DPI = 200
 
-# =============================
-# EXECUTION MODE
-# =============================
 USE_MANUAL_PICKER = True   # True → GUI, False → test mode
 
+
+# =============================
+# FILE SELECTION
+# =============================
+print("Opening input file dialog...")
 FILEPATH = select_input_file()
 print("Using input file:", FILEPATH)
 
+print("Opening output file dialog...")
 default_output_name = f"{FILEPATH.stem}_Result.xlsx"
 OUTPUT_FILE = select_output_file(default_output_name, input_file=FILEPATH)
 print("Output Excel file:", OUTPUT_FILE)
+
+
 # =============================
 # LOAD DATA
 # =============================
+print("Loading data...")
 df_it = load_it_data(FILEPATH, sheet_name=SHEET_IT)
+print("Data loaded. Columns:", list(df_it.columns))
+
+print("Opening time column selector...")
+TIME_COL = select_time_column(df_it)
+print("Selected time column:", TIME_COL)
+
 device_list = resolve_device_list(df_it, TIME_COL, DEVICES_TO_DO)
+print("Devices to process:", device_list)
+
 
 # =============================
 # PLOT OUTPUT DIRECTORY
@@ -60,6 +75,7 @@ PLOTS_DIR = OUTPUT_DIR / "plots" / FILEPATH.stem
 PLOTS_DIR.mkdir(parents=True, exist_ok=True)
 
 print("Plot folder:", PLOTS_DIR)
+
 
 # =============================
 # OVERVIEW PLOT
@@ -93,8 +109,6 @@ for dev in device_list:
         )
     else:
         print("Mode: test (predefined windows)")
-
-        # Define fixed windows for testing
         on_w = [(2, 3)]
         off_w = [(0, 1)]
 
