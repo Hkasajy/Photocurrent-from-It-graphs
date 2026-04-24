@@ -1,0 +1,45 @@
+# Manual UI Test Checklist
+
+This checklist validates the interactive manual picker, which is not fully covered by automated tests because it depends on user mouse/keyboard interaction.
+
+## Test setup
+- Run `scripts/run_manual_picker.py`
+- Select a sample I–t Excel file
+- Select an output Excel file location
+
+## Picker behavior to verify
+
+### Basic window selection
+- A plot window opens for each device.
+- Four clicks define one pulse:
+  1. ON start
+  2. ON end
+  3. OFF start
+  4. OFF end
+- After four clicks, ON and OFF shaded regions appear.
+
+### Undo behavior
+- Pressing `u` after one or more clicks removes the last click.
+- Pressing `u` after a completed pulse removes the last saved pulse.
+
+### Finish behavior
+- `SHIFT + click` finishes the current device.
+- If a pulse is incomplete, finishing is blocked until the pulse is completed or undone.
+
+### Output behavior
+- A PNG plot is saved for each processed device.
+- The Excel output file is created.
+- The output workbook contains:
+  - `Manual_Windows`
+  - `PerPulse`
+  - `PerDeviceSummary`
+  - plot sheets for processed devices
+
+### Pass criteria
+- Windows are correctly shaded after 4 clicks
+- Undo removes last action consistently
+- SHIFT+click closes window only when no partial pulse exists
+- Output Excel file contains all expected sheets
+
+## Known limitation
+Automated tests currently validate the non-interactive analysis pipeline, but not real mouse-click GUI behavior.
