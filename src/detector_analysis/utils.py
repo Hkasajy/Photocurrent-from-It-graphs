@@ -4,11 +4,8 @@ import re
 
 def excel_safe_sheet_name(name: str, prefix: str = "Plot_") -> str:
     """
-    Convert a string into a valid Excel sheet name.
+    This function converts a string into a valid Excel sheet name, to assure no naming errors happen
 
-    Excel sheet names:
-    - cannot exceed 31 characters
-    - cannot contain: : \\ / ? * [ ]
     """
     s = re.sub(r"[:\\/?*\[\]]", "_", str(name))
     s = prefix + s
@@ -17,14 +14,7 @@ def excel_safe_sheet_name(name: str, prefix: str = "Plot_") -> str:
 
 def safe_filename(name: str) -> str:
     """
-    Convert a string into a safe filename.
-
-    Keeps only:
-    - letters
-    - numbers
-    - underscore
-    - dash
-
-    All other characters are replaced with underscores.
+    This function converts a string into a safe filename, by keeping only
+    - letters, number, underscores, and dashes. All other characters are replaced with underscores.
     """
     return re.sub(r"[^A-Za-z0-9_\-]+", "_", str(name))
