@@ -1,5 +1,6 @@
-"""I/O helpers for detector analysis."""
 import os
+from pathlib import Path
+from tkinter import Tk, filedialog
 
 import pandas as pd
 from openpyxl.drawing.image import Image as XLImage
@@ -7,21 +8,57 @@ from openpyxl.drawing.image import Image as XLImage
 from detector_analysis.utils import excel_safe_sheet_name
 
 
+def select_input_file() -> Path:
+    """
+    Open a file dialog for the user to select the input Excel file.
+    """
+    root = Tk()
+    root.withdraw()
+
+    filepath = filedialog.askopenfilename(
+        title="Select I–t Excel data file",
+        filetypes=[
+            ("Excel files", "*.xlsx *.xls"),
+            ("All files", "*.*"),
+        ],
+    )
+
+    root.destroy()
+
+    if not filepath:
+        raise FileNotFoundError("No input file was selected.")
+
+    return Path(filepath)
+
+
+def select_output_file(default_name: str) -> Path:
+    """
+    Open a file dialog for the user to choose where to save the output Excel file.
+    """
+    root = Tk()
+    root.withdraw()
+
+    filepath = filedialog.asksaveasfilename(
+        title="Save results Excel file as",
+        defaultextension=".xlsx",
+        initialfile=default_name,
+        filetypes=[
+            ("Excel files", "*.xlsx"),
+            ("All files", "*.*"),
+        ],
+    )
+
+    root.destroy()
+
+    if not filepath:
+        raise FileNotFoundError("No output file location was selected.")
+
+    return Path(filepath)
+
+
 def load_it_data(filepath, sheet_name=0) -> pd.DataFrame:
     """
     Load I-t data from an Excel file.
-
-    Parameters
-    ----------
-    filepath : str
-        Path to the Excel file.
-    sheet_name : int or str
-        Sheet index or sheet name.
-
-    Returns
-    -------
-    pandas.DataFrame
-        Loaded I-t data.
     """
     return pd.read_excel(filepath, sheet_name=sheet_name)
 
@@ -29,20 +66,6 @@ def load_it_data(filepath, sheet_name=0) -> pd.DataFrame:
 def resolve_device_list(df: pd.DataFrame, time_col: str, devices_to_do="ALL"):
     """
     Determine which device columns should be analyzed.
-
-    Parameters
-    ----------
-    df : pandas.DataFrame
-        Input I-t dataframe.
-    time_col : str
-        Name of the time column.
-    devices_to_do : str or list[str]
-        Either "ALL" or a list of selected device names.
-
-    Returns
-    -------
-    list[str]
-        Device columns to analyze.
     """
     if time_col not in df.columns:
         raise KeyError(
@@ -77,29 +100,12 @@ def write_results_excel(
 ):
     """
     Write analysis results to an Excel workbook and embed per-device plots.
-
-    Parameters
-    ----------
-    output_file : str
-        Output Excel file path.
-    windows_df : pandas.DataFrame
-        DataFrame containing selected ON/OFF window bounds.
-    perpulse_df : pandas.DataFrame
-        DataFrame containing per-pulse extracted metrics.
-    summary_df : pandas.DataFrame
-        DataFrame containing per-device summary metrics.
-    device_plot_files : dict
-        Dictionary mapping device names to saved PNG plot paths.
-    sheet_windows : str
-        Name of the manual-window sheet.
-    sheet_perpulse : str
-        Name of the per-pulse sheet.
-    sheet_summary : str
-        Name of the summary sheet.
     """
-    output_dir = os.path.dirname(output_file)
+    output_file = Path(output_file)
+
+    output_dir = output_file.parent
     if output_dir:
-        os.makedirs(output_dir, exist_ok=True)
+        output_dir.mkdir(parents=True, exist_ok=True)
 
     with pd.ExcelWriter(output_file, engine="openpyxl") as writer:
         windows_df.to_excel(writer, sheet_name=sheet_windows, index=False)
