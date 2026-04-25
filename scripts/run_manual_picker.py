@@ -2,7 +2,6 @@ import sys
 from pathlib import Path
 import pandas as pd
 
-print("Script started")
 
 # Ensure src/ is on path
 ROOT = Path(__file__).resolve().parents[1]
@@ -30,32 +29,26 @@ from detector_analysis.utils import safe_filename
 # CONFIG
 # =============================
 SHEET_IT = 0
-
-DEVICES_TO_DO = "ALL"
-PLOT_ALL_DEVICES_OVERLAY = True
-USE_MEDIAN = True
+DEVICES_TO_DO = "ALL"    #It is possible to run the code for only one device.
+PLOT_ALL_DEVICES_OVERLAY = True # Optional plot showing all It graphs before calculations
+USE_MEDIAN = True # For future developments if other calculation methods are to be used
 PLOT_DPI = 200
-
-USE_MANUAL_PICKER = True   # True → GUI, False → test mode
+USE_MANUAL_PICKER = True   # True → GUI, False → test mode (This is only used for testing numerical calculations)
 
 
 # =============================
 # FILE SELECTION
 # =============================
-print("Opening input file dialog...")
 FILEPATH = select_input_file()
 print("Using input file:", FILEPATH)
-
-print("Opening output file dialog...")
 default_output_name = f"{FILEPATH.stem}_Result.xlsx"
 OUTPUT_FILE = select_output_file(default_output_name, input_file=FILEPATH)
 print("Output Excel file:", OUTPUT_FILE)
 
-
 # =============================
 # LOAD DATA
 # =============================
-print("Loading data...")
+
 df_it = load_it_data(FILEPATH, sheet_name=SHEET_IT)
 print("Data loaded. Columns:", list(df_it.columns))
 
@@ -66,23 +59,21 @@ print("Selected time column:", TIME_COL)
 device_list = resolve_device_list(df_it, TIME_COL, DEVICES_TO_DO)
 print("Devices to process:", device_list)
 
-
 # =============================
 # PLOT OUTPUT DIRECTORY
 # =============================
+
 OUTPUT_DIR = ROOT / "outputs"
 PLOTS_DIR = OUTPUT_DIR / "plots" / FILEPATH.stem
 PLOTS_DIR.mkdir(parents=True, exist_ok=True)
 
 print("Plot folder:", PLOTS_DIR)
 
-
 # =============================
 # OVERVIEW PLOT
 # =============================
 if PLOT_ALL_DEVICES_OVERLAY:
     plot_all_devices_overlay(df_it, device_list, TIME_COL)
-
 
 # =============================
 # MAIN LOOP
