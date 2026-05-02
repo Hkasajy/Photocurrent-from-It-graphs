@@ -5,7 +5,7 @@ import pandas as pd
 
 def plot_all_devices_overlay(df, device_list, time_col: str):
     """
-    Plot all selected device current traces on one overview figure.
+    Plot all selected device current traces on one overview figure, to assure all data is loaded
     """
     t = pd.to_numeric(df[time_col], errors="coerce")
 
@@ -34,7 +34,7 @@ def save_device_plot_png(
     dpi: int = 200,
 ):
     """
-    Save a per-device current trace with selected ON/OFF windows shaded.
+    Save a per-device current trace with selected ON/OFF windows shaded, for reference.
     """
     tt = pd.to_numeric(df[time_col], errors="coerce")
     yy = pd.to_numeric(df[device], errors="coerce")

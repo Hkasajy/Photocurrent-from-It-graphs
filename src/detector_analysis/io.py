@@ -1,20 +1,21 @@
+"""
+The functions here allow the user to select the input .xlsx file,
+and where to save the .xlsx output file. Also, a popup window will open to allow
+the user to select the time column in the sheet, allowing generalization of input files.
+"""
+
 import os
 from pathlib import Path
-from tkinter import Tk, filedialog
-
 import pandas as pd
 from openpyxl.drawing.image import Image as XLImage
-
 from detector_analysis.utils import excel_safe_sheet_name
-
-from tkinter import Tk, Toplevel, StringVar, OptionMenu, Button, Label
-
+from tkinter import Tk, Toplevel, StringVar, OptionMenu, Button, Label, filedialog
 
 def select_time_column(df: pd.DataFrame) -> str:
     """
-    Open a dialog allowing the user to select the time column from available columns.
+    This function opens a dialog allowing the user to select the time column from available columns
+    allowing gneralization and preventing naming issues (The user could name the time column as (t, Time, tIme ...))
     """
-    from tkinter import Tk, Toplevel, StringVar, OptionMenu, Button, Label
 
     columns = [str(c) for c in df.columns]
 
@@ -28,11 +29,11 @@ def select_time_column(df: pd.DataFrame) -> str:
     result = {"value": None}
 
     window = Toplevel(root)
-    window.title("Select Time Column")
+    window.title(" Select Time Column")
     window.geometry("350x140")
     window.resizable(False, False)
 
-    Label(window, text="Select the time column:").pack(pady=10)
+    Label(window, text="Please Select the time column:").pack(pady=10)
 
     dropdown = OptionMenu(window, selected_col, *columns)
     dropdown.pack(pady=5)
@@ -53,32 +54,30 @@ def select_time_column(df: pd.DataFrame) -> str:
     root.destroy()
 
     if result["value"] is None:
-        raise ValueError("No time column selected.")
+        raise ValueError("You did not select a time coulmn")
 
     return result["value"]
 
-    def confirm():
-        result["value"] = selected_col.get()
-        selection_window.destroy()
-
-    Button(selection_window, text="OK", command=confirm).pack(pady=10)
-
-    selection_window.mainloop()
-    root.destroy()
-
-    if result["value"] is None:
-        raise ValueError("No time column selected.")
-
-    return result["value"]
-
-def select_input_file() -> Path:
+def _create_hidden_root() -> Tk:
     """
-    Open a file dialog for the user to select the input Excel file.
+    Create a hidden Tk root window that forces dialogs to appear in front.
+    This avoids cases where file dialogs opens behind the users complier or other windows.
     """
     root = Tk()
     root.withdraw()
+    root.attributes("-topmost", True)
+    root.update()
+    return root
+
+
+def select_input_file() -> Path:
+    """
+    This function opens a dialog for the user to select the input Excel file, more general than script based inputs.
+    """
+    root = _create_hidden_root()
 
     filepath = filedialog.askopenfilename(
+        parent=root,
         title="Select I–t Excel data file",
         filetypes=[
             ("Excel files", "*.xlsx *.xls"),
@@ -96,14 +95,13 @@ def select_input_file() -> Path:
 
 def select_output_file(default_name: str, input_file: Path | None = None) -> Path:
     """
-    Open a file dialog for the user to choose where to save the output Excel file.
-
+    This function opens a file dialog for the user to choose where to save the output Excel file.
     If input_file is provided, prevent overwriting the original input workbook.
     """
-    root = Tk()
-    root.withdraw()
+    root = _create_hidden_root()
 
     filepath = filedialog.asksaveasfilename(
+        parent=root,
         title="Save results Excel file as",
         defaultextension=".xlsx",
         initialfile=default_name,
@@ -137,7 +135,6 @@ def load_it_data(filepath, sheet_name=0) -> pd.DataFrame:
     Load I-t data from an Excel file.
     """
     return pd.read_excel(filepath, sheet_name=sheet_name)
-
 
 def resolve_device_list(df: pd.DataFrame, time_col: str, devices_to_do="ALL"):
     """

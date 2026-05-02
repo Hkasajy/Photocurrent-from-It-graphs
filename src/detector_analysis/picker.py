@@ -11,10 +11,11 @@ def pick_windows_interactive_shift_undo(df, device, time_col: str):
     """
     Interactive manual picker for ON/OFF windows.
 
-    Controls
+    Controls -> User inputs
     --------
     - Click 4 times per pulse:
         ON_start, ON_end, OFF_start, OFF_end
+        !!Order must be maintained for dynamic calculations (See documentation on calculation methods)!!
     - Press 'u' to undo:
         * removes last click (if mid-pulse)
         * removes last full pulse (if no active clicks)
@@ -42,7 +43,7 @@ def pick_windows_interactive_shift_undo(df, device, time_col: str):
     ax.set_ylabel("Current (A)")
     ax.set_title(
         f"DEVICE: {device}\n"
-        "Click order: ON_start, ON_end, OFF_start, OFF_end\n"
+        "Click order (Please maintain for dynamic calculations): ON_start, ON_end, OFF_start, OFF_end\n"
         "UNDO: 'u' | FINISH: SHIFT + click"
     )
     ax.grid(True)

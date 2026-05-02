@@ -1,7 +1,6 @@
 """Shared utilities for detector analysis."""
 import re
 
-
 def excel_safe_sheet_name(name: str, prefix: str = "Plot_") -> str:
     """
     This function converts a string into a valid Excel sheet name, to assure no naming errors happen
@@ -10,7 +9,6 @@ def excel_safe_sheet_name(name: str, prefix: str = "Plot_") -> str:
     s = re.sub(r"[:\\/?*\[\]]", "_", str(name))
     s = prefix + s
     return s[:31]
-
 
 def safe_filename(name: str) -> str:
     """
