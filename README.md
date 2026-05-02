@@ -4,18 +4,13 @@ photodetectors are devices that generate an electrical response (current) once s
 
 The photocurrent is defined as:
 
-\[
-I_{\mathrm{ph}} = I_{\mathrm{on}} - I_{\mathrm{off}}
-\]
+**I_ph = I_on − I_off**
 
-where \(I_{\mathrm{on}}\) is the current measured during illumination, and \(I_{\mathrm{off}}\) is the dark current measured when the device is not illuminated.
+where `I_on` is the current measured during illumination, and `I_off` is the dark current measured when the device is not illuminated.
 
 In addition, an analogy to the signal-to-noise ratio in these devices is the so-called on/off ratio, defined here as:
 
-\[
-\mathrm{OnOff} = \frac{I_{\mathrm{ph}}}{I_{\mathrm{off}}}
-= \frac{I_{\mathrm{on}} - I_{\mathrm{off}}}{I_{\mathrm{off}}}
-\]
+**OnOff = I_ph / I_off = (I_on − I_off) / I_off**
 
 These metrics can be found by measuring the devices current with time, where the device is subject to pulses of light, in other words a graph of current with time, such as the one shown in the figure below. By measuring the current at a specify point in time it is possible to extract the current at that point, but for more rigorous analysis it is recommended to calculate the median of a given time window. 
 
