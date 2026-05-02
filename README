@@ -9,6 +9,6 @@ In addition, an analogy to the signal to noise ration in these devices is the so
 on/off =I_ph/I_Dark                                                                                                      Eq. 2                                                                                                                               
 These metrics can be found by measuring the devices current with time, where the device is subject to pulses of light, in other words a graph of current with time, such as the one shown in the figure below. By measuring the current at a specify point in time it is possible to extract the current at that point, but for more rigorous analysis it is recommended to calculate the median of a given time window. 
 
- ![Input file selection dialog](docs/images/It_graph.png)
+ ![Input file selection dialog](Docs/images/It_graph.png)
 
 The aim of this project is to introduce a simple software that facilitates these calculations. 
