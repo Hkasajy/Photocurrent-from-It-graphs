@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "photocurrent-from-it-graphs"
+version = "0.1.0"
+description = "Manual ON/OFF window analysis for photocurrent extraction from I-t data"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "Huthaifa Alkasajy" }
+]
+dependencies = [
+    "numpy",
+    "pandas",
+    "matplotlib",
+    "openpyxl",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+]
+
+[project.scripts]
+run-manual-picker = "detector_analysis.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
