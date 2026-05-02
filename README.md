@@ -67,4 +67,65 @@ The user then can continue with defining windows, the end result could look like
 However, the user is free to select as many windows as required. 
 The final output data will be saved in an excel file such as this one 
 
+![An example of an output data sheet](Docs/images/output_1.png)
+
+The first sheet called Manual_Windows shows the index of each device analyzed, each peak will be numbered, then for each peak the user selected time “clicks” are shown. 
+
+The second sheet called PerPulse shown below also contains the device and pulse index, the on current, off current, photocurrent, its absolute value, and the on off ratio. The same clicks are also shown here for competence, and finally the calculation method. 
+
+[The PerPulse sheet](Docs/images/perdevice.png)
+
+The third sheet called PerDeviceSummary shown below should only be used to detect large variations across a batch of devices, where it shows simple statistics of previously discussed metrics. 
+
+[The PerDeviceSummary sheet](Docs/images/perdevice_1.png)
+
+Finally, for each device in the input file, a graph is saved showing the time windows that were defined by the user, as shown below. 
+
+[Saved windowed It graph](Docs/images/saved_image.png)
+
+**Testing: **
+
+The project includes both automated tests for the numerical and non-interactive parts of the pipeline, and due to the complexity of GUI, a manual checklist for the graphical user interface testing was created and tested. 
+For running the tests
+Simply install the package with testing dependencies using 
+
+```bash
+pip install -e ".[test]"
+
+
+All tests are located in the tests/ directory as follows:
+
+test_metrics.py
+
+This file tests the core numerical functions used to extract photocurrent-related quantities from selected ON/OFF windows.
+It verifies that:
+current values are correctly extracted from selected time windows, median and mean window statistics behave correctly, insufficiently populated windows return NaN, and that the photocurrent and on/off ratio is computed as defined previously.
+
+test_io.py
+
+This file tests input-handling and validation functions.
+It verifies the following: all device columns are correctly detected when devices_to_do="ALL" , the selected device columns are correctly resolved for missing time columns raise a clear error, and requested device columns that are not present in the input data raise a clear error.
+
+test_pipeline.py
+
+This file tests the non-interactive analysis pipeline using controlled sample data.
+It verifies the following workflow: 
+Excel input file from data loading, to device columns resolving, to the predefined on/off windows, the computed photocurrent metrics, the output excel sheeting writing, and finally verifies the expected outputs. 
+
+Manual UI testing
+
+This checklist verifies the following manually, input-file selection, output-file selection, time-column selection, overview plotting, ON/OFF window selection, undo behavior, SHIFT-click device completion , and creation of output Excel file and plot sheets. 
+
+**Limitations and future improvements: 
+**
+The following limitations and future improvements are listed for version 0.1.0
+Only .xlsx files are accepted as input and output, in future versions this could be expanded. 
+The software assumes the input data is contained in the first sheet, this can be changed in the configuration defaults in cli.py file line 26. In future versions, a GUI should be added to allow the user to select which sheet contains the input data. 
+An algorithm to automatically detect on and off windows can be added to future versions, and the user can select which method to use. 
+While there are several methods to calculate on off rations, this version assumes dynamic measurements, the most common method used in this type of experiments, initial and final dark current methods can be added in future versions. 
+
+
+**Generative AI statement: 
+**
+In accordance with the principles of honesty, transparency, and accountability stated in the University of Bologna policy for an ethical and responsible use of generative artificial intelligence (GenAI), in particular the use of generative artificial intelligence in “Use cases of generative artificial intelligence in preparing student work to be assessed” such as the “generating or explaining a programming code” (found here), the author decliners that ChatGPT 5.4  and ChatGPT 5.5 were used to help in generating this code, where active supervision and critical thinking were employed to account for the generated results, thus complying with the university policy principles. The author takes full responsibility for this code, and the provided example data which were collected by the author. 
 
